@@ -25,52 +25,85 @@ export function VideoCard({ clip, onEnded, isVisible = false }: VideoCardProps) 
     const { toggleLike, isLiked } = useLikedVideos();
 
     useEffect(() => {
-        if (player && isVisible) {
-            try {
+        if (!player) return;
+
+        try {
+            if (isVisible) {
                 player.playVideo();
-            } catch (err) {
-                console.error('Error playing video:', err);
-                setError('Failed to play video');
-            }
-        } else if (player && !isVisible) {
-            try {
+            } else {
                 player.pauseVideo();
-            } catch (err) {
-                console.error('Error pausing video:', err);
             }
+        } catch (err) {
+            console.error('Error updating player state:', err);
         }
     }, [isVisible, player]);
 
     const onReady = (event: YouTubeEvent) => {
         console.log('Video ready');
-        setPlayer(event.target);
+        const player = event.target;
+        setPlayer(player);
         setIsLoading(false);
-        if (isVisible) {
-            event.target.playVideo();
-        }
+        setError(null);
     };
 
     const onError = (event: YouTubeEvent) => {
         console.error('YouTube player error:', event);
-        setError('Failed to load video');
+        const errorCode = event.data;
+        let errorMessage = 'Failed to load video';
+        
+        switch (errorCode) {
+            case 2:
+                errorMessage = 'Invalid video ID';
+                break;
+            case 5:
+                errorMessage = 'HTML5 player error';
+                break;
+            case 100:
+                errorMessage = 'Video not found';
+                break;
+            case 101:
+            case 150:
+                errorMessage = 'Video playback not allowed';
+                break;
+        }
+        
+        setError(errorMessage);
         setIsLoading(false);
     };
 
     const onStateChange = (event: YouTubeEvent) => {
-        // If video ends (state = 0), call onEnded
-        if (event.data === 0 && onEnded) {
-            onEnded();
-        }
-
-        // If video is playing, ensure it starts from startTime
-        if (event.data === 1) {
+        const state = event.data;
+        
+        if (state === 1) { // Playing
+            setIsLoading(false);
+            setError(null);
             const currentTime = event.target.getCurrentTime();
             if (currentTime < clip.startTime) {
                 event.target.seekTo(clip.startTime);
             }
-            if (currentTime > clip.endTime) {
-                event.target.seekTo(clip.startTime);
+        }
+        else if (state === 0) { // Ended
+            if (onEnded) {
+                onEnded();
             }
+        }
+        else if (state === -1 || state === 3) { // Unstarted or Buffering
+            setIsLoading(true);
+        }
+        else if (state === 2) { // Paused
+            setIsLoading(false);
+        }
+    };
+
+    const handleRetry = () => {
+        setError(null);
+        setIsLoading(true);
+        if (player) {
+            player.loadVideoById({
+                videoId: clip.youtubeId,
+                startSeconds: clip.startTime,
+                endSeconds: clip.endTime
+            });
         }
     };
 
@@ -104,6 +137,7 @@ export function VideoCard({ clip, onEnded, isVisible = false }: VideoCardProps) 
                                 height: '100%',
                                 playerVars: {
                                     autoplay: isVisible ? 1 : 0,
+                                    mute: 1,
                                     start: clip.startTime,
                                     end: clip.endTime,
                                     controls: 1,
@@ -111,6 +145,8 @@ export function VideoCard({ clip, onEnded, isVisible = false }: VideoCardProps) 
                                     rel: 0,
                                     showinfo: 0,
                                     origin: window.location.origin,
+                                    playsinline: 1,
+                                    enablejsapi: 1
                                 },
                             }}
                             onReady={onReady}
@@ -133,7 +169,7 @@ export function VideoCard({ clip, onEnded, isVisible = false }: VideoCardProps) 
                         <div className="text-white text-center">
                             <p className="text-red-500 mb-2">{error}</p>
                             <button
-                                onClick={() => window.location.reload()}
+                                onClick={handleRetry}
                                 className="px-4 py-2 bg-white/10 rounded hover:bg-white/20"
                             >
                                 Retry

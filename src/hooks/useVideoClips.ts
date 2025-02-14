@@ -3,28 +3,68 @@ import type { VideoClip } from "../components/VideoCard";
 
 const hardcodedClips: VideoClip[] = [
     {
-        id: "3b1b-neural-networks",
-        youtubeId: "aircAruvnKk",
+        id: "web-dev-basics",
+        youtubeId: "916GWv2Qs08",
         startTime: 60,
         endTime: 180,
-        title: "But what is a neural network?",
-        description: "A beautiful visual introduction to neural networks by 3Blue1Brown"
+        title: "Web Development in 2024",
+        description: "Learn about the latest trends and technologies in web development"
     },
     {
-        id: "karpathy-gpt",
-        youtubeId: "kCc8FmEb1nY",
-        startTime: 180,
-        endTime: 300,
-        title: "Let's build GPT",
-        description: "Understanding GPT architecture and implementation by Andrej Karpathy"
-    },
-    {
-        id: "veritasium-learning",
-        youtubeId: "R9OHn5ZF4Uo",
+        id: "react-hooks",
+        youtubeId: "TNhaISOUy6Q",
         startTime: 120,
         endTime: 240,
-        title: "The Science of Learning",
-        description: "How to learn more effectively using scientific principles"
+        title: "React Hooks Explained",
+        description: "Understanding React Hooks with practical examples"
+    },
+    {
+        id: "javascript-async",
+        youtubeId: "vn3tm0quoqE",
+        startTime: 90,
+        endTime: 210,
+        title: "Async JavaScript Made Simple",
+        description: "Master asynchronous programming in JavaScript"
+    },
+    {
+        id: "css-grid",
+        youtubeId: "9zBsdzdE4sM",
+        startTime: 150,
+        endTime: 270,
+        title: "CSS Grid Layout",
+        description: "Learn modern CSS Grid layout techniques"
+    },
+    {
+        id: "typescript-basics",
+        youtubeId: "BwuLxPH8IDs",
+        startTime: 180,
+        endTime: 300,
+        title: "TypeScript for Beginners",
+        description: "Getting started with TypeScript in your web projects"
+    },
+    {
+        id: "nextjs-intro",
+        youtubeId: "Sklc_fQBmcs",
+        startTime: 140,
+        endTime: 260,
+        title: "Next.js Tutorial",
+        description: "Introduction to Next.js framework and its features"
+    },
+    {
+        id: "tailwind-basics",
+        youtubeId: "mr15Xzb1Ook",
+        startTime: 100,
+        endTime: 220,
+        title: "TailwindCSS Crash Course",
+        description: "Learn utility-first CSS with Tailwind"
+    },
+    {
+        id: "git-basics",
+        youtubeId: "8JJ101D3knE",
+        startTime: 120,
+        endTime: 240,
+        title: "Git for Beginners",
+        description: "Essential Git commands and workflows"
     }
 ];
 
